@@ -12,7 +12,7 @@ namespace EntityFramework.Classes
         {
             using (Context context = new Context())
             {
-
+                Console.WriteLine("imWorked!");
             }
         }
     }
