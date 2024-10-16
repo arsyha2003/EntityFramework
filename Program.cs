@@ -12,7 +12,8 @@ namespace EntityFramework.Classes
         {
             using (Context context = new Context())
             {
-                Console.WriteLine("imWorked!");
+                context.SaveChanges();
+                context.GetAllGames();//с вытягиванием данных чета не получилось
             }
         }
     }
