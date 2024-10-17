@@ -12,22 +12,15 @@ namespace EntityFramework.Classes
     class Context : DbContext
     {
         private readonly IConfiguration configuration;
-        DbSet<Model> game { get; set; }
+        public DbSet<Game> game { get; set; }
+        public DbSet<GameMode> gameMode { get; set; }
+        public DbSet<Countries> countries { get; set; }
+        public DbSet<Company> companies { get; set; }
+        public DbSet<StyleOfGame> styles { get; set; }
         public Context()
         {
             Database.EnsureDeleted();
             Database.EnsureCreated();
-        }
-        public void GetAllGames()
-        {
-            foreach(var model in game)
-            {
-                Console.WriteLine(
-                    $"{model.NameOfGame}" +
-                    $"{model.Company} {model.Style} " +
-                    $"{model.DateOfPublication}" +
-                    $"{model.GameMode} {model.CountOfCopies}");
-            }
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,26 +28,10 @@ namespace EntityFramework.Classes
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Model>().HasData(new Model()
-            {
-                Id = 1,
-                NameOfGame = "NewGame",
-                Company = "GamesINC",
-                Style = "Shooter",
-                DateOfPublication = DateTime.Now,
-                GameMode = "Multiplayer",
-                CountOfCopies = 100
-            });
-            modelBuilder.Entity<Model>().HasData(new Model()
-            {
-                Id = 1,
-                NameOfGame = "UltraKill",
-                Company = "TopGames",
-                Style = "Shooter",
-                DateOfPublication = DateTime.Now,
-                GameMode = "SinglePlayer/MultiPlayer",
-                CountOfCopies = 1000
-            });
+            modelBuilder.Entity<GameMode>().HasMany(gm => gm.Game).WithOne(game => game.GameMode);
+            modelBuilder.Entity<Game>().HasMany(game => game.Companies).WithMany(comp => comp.Games);
+            modelBuilder.Entity<Company>().HasOne(comp => comp.Country).WithMany(country => country.Companies);
+            modelBuilder.Entity<Game>().HasOne(style => style.Style).WithMany(game => game.Games);
             base.OnModelCreating(modelBuilder);
         }
     }
